@@ -7,6 +7,7 @@ import { ProductCard } from "@/components/storefront/ProductCard";
 import { DealsCountdown } from "@/components/storefront/DealsCountdown";
 import { HomeGalleryShowcase } from "@/components/storefront/HomeGalleryShowcase";
 import { HomeVideoShowcase } from "@/components/storefront/HomeVideoShowcase";
+import { CinematicFootwearShowcase } from "@/components/storefront/CinematicFootwearShowcase";
 import { CURATED_GALLERY_ITEMS } from "@/lib/galleryData";
 import {
   ArrowRight,
@@ -389,10 +390,13 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 8. SS26 LOOKBOOK & RUNWAY GALLERY SHOWCASE (Men, Women, and Kids Spotlights) */}
+      {/* 8. CINEMATIC ATHLETIC MOTION & CARBON LAB VIDEO SHOWCASE */}
+      <CinematicFootwearShowcase />
+
+      {/* 9. SS26 LOOKBOOK & RUNWAY GALLERY SHOWCASE (Men, Women, and Kids Spotlights) */}
       <HomeGalleryShowcase items={galleryItems} />
 
-      {/* 9. BRAND VALUE PROPOSITION */}
+      {/* 10. BRAND VALUE PROPOSITION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="p-6 sm:p-12 rounded-3xl bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800">
           <div className="max-w-2xl mx-auto text-center space-y-2.5 sm:space-y-3 mb-8 sm:mb-12">

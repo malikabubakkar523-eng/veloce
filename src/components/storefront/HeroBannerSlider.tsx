@@ -177,10 +177,10 @@ export function HeroBannerSlider({ slides: initialSlides }: { slides: HeroSlideD
                 className="object-cover object-bottom sm:object-center"
               />
             )}
-            {/* Cinematic High-Contrast Gradient Layering */}
-            <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/85 md:via-zinc-950/60 lg:via-zinc-950/40 to-transparent pointer-events-none" />
-            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-zinc-950 to-transparent pointer-events-none" />
-            <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-zinc-950/80 to-transparent pointer-events-none" />
+            {/* Cinematic High-Contrast Gradient Layering (Mobile-optimized) */}
+            <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/90 sm:via-zinc-950/80 md:via-zinc-950/60 lg:via-zinc-950/40 to-zinc-950/30 sm:to-transparent pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-zinc-950 via-zinc-950/70 to-transparent pointer-events-none" />
+            <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-zinc-950/90 via-zinc-950/50 to-transparent pointer-events-none" />
           </motion.div>
         </AnimatePresence>
       </div>
