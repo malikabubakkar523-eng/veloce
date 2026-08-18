@@ -6,7 +6,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/ToastProvider";
 import { User, Mail, Lock, ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
-import { UserOnboardingModal } from "@/components/auth/UserOnboardingModal";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -17,7 +16,6 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,18 +59,20 @@ export default function RegisterPage() {
       if (res.ok && data.success) {
         toast({
           title: "Account Created Successfully!",
-          description: `Welcome to VELOCE, ${name}. Let's set up your style preferences!`,
+          description: `Welcome to VELOCE, ${name}. Directing to your style calibration...`,
           type: "success",
         });
 
-        // Launch Post-Registration Personalization Onboarding Flow
-        setShowOnboarding(true);
+        // Immediately redirect newly registered user to the dedicated onboarding page
+        router.push("/onboarding");
+        router.refresh();
       } else {
         toast({
           title: "Registration Failed",
           description: data.error || "An error occurred creating your account.",
           type: "error",
         });
+        setLoading(false);
       }
     } catch (err) {
       toast({
@@ -80,7 +80,6 @@ export default function RegisterPage() {
         description: "Could not complete registration. Please try again.",
         type: "error",
       });
-    } finally {
       setLoading(false);
     }
   };
@@ -216,11 +215,6 @@ export default function RegisterPage() {
           </Link>
         </p>
       </div>
-
-      {/* Post-Registration AI Personalization Setup Modal */}
-      {showOnboarding && (
-        <UserOnboardingModal userName={name} />
-      )}
     </div>
   );
 }
