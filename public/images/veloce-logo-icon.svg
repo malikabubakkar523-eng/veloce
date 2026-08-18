@@ -1,42 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
-  <defs>
-    <linearGradient id="sole-grad-glow" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f43f5e" />
-      <stop offset="100%" stop-color="#fb7185" />
-    </linearGradient>
-  </defs>
-  <!-- Shoe Tread Sole Emblem (Vectorized Brand Icon) -->
-  <g transform="translate(50, 50) rotate(-35) translate(-36, -48)">
-    <!-- Heel Loop -->
-    <path 
-      d="M18,72 C18,84 32,94 44,94 C56,94 62,84 62,72 C62,64 56,58 50,54 C46,52 42,50 38,46 C34,42 32,38 30,32 C26,24 30,12 40,8 C46,6 52,8 56,12" 
-      stroke="currentColor" 
-      stroke-width="5" 
-      stroke-linecap="round" 
-      stroke-linejoin="round"
-    />
-    <!-- Outsole Perimeter Contour -->
-    <path 
-      d="M20,70 C16,56 18,36 28,20 C34,10 44,4 54,6 C62,8 68,16 68,28 C68,44 60,56 58,68 C56,80 50,92 38,92 C26,92 20,82 20,70 Z" 
-      stroke="currentColor" 
-      stroke-width="5.5" 
-      stroke-linecap="round" 
-      stroke-linejoin="round"
-    />
-    <!-- Flex Grooves & Chevron Traction Plates -->
-    <path 
-      d="M32,24 L60,28 M30,36 L58,42 M28,48 L52,56 M36,66 L52,72 M34,78 L48,82" 
-      stroke="currentColor" 
-      stroke-width="4.5" 
-      stroke-linecap="round"
-    />
-    <!-- Inner Core Propulsion Bridge -->
-    <path 
-      d="M44,20 L38,50 L46,74" 
-      stroke="url(#sole-grad-glow)" 
-      stroke-width="4.5" 
-      stroke-linecap="round" 
-      stroke-linejoin="round"
-    />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" fill="none">
+  <!-- Emblem Centered -->
+  <g transform="translate(140, 50) scale(1.25)">
+    <!-- Left Wing -->
+    <path d="M12 28 C28 27, 46 36, 56 48 C50 62, 45 78, 40 98 L56 102 C64 78, 72 58, 80 40 C65 24, 42 12, 12 28 Z" fill="currentColor" />
+    <!-- Shoe Silhouette -->
+    <path d="M48 108 C36 122, 38 136, 52 144 C66 150, 84 146, 102 128 C128 102, 154 68, 172 26 C158 32, 146 44, 134 60 C120 78, 106 98, 88 116 C76 128, 64 132, 56 128 C50 124, 50 116, 54 108 Z" fill="currentColor" />
+    <!-- Wave 1 -->
+    <path d="M68 96 C84 76, 104 52, 126 34 C140 22, 156 14, 170 12 C154 22, 140 38, 126 56 C108 78, 92 102, 78 114 C72 110, 70 102, 68 96 Z" fill="currentColor" />
+    <!-- Wave 2 -->
+    <path d="M96 74 C114 54, 134 34, 158 20 C166 16, 178 10, 188 8 C174 18, 160 32, 144 48 C128 66, 114 84, 104 90 C100 86, 98 80, 96 74 Z" fill="currentColor" />
   </g>
+
+  <!-- VELOCE Wordmark Below -->
+  <text x="250" y="420" text-anchor="middle" font-family="'Montserrat', 'Outfit', 'Space Grotesk', -apple-system, sans-serif" font-weight="900" font-size="64" letter-spacing="0.18em" fill="currentColor">
+    VELOCE
+  </text>
 </svg>
