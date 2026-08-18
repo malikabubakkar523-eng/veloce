@@ -49,7 +49,7 @@ export default async function AdminCustomerDetailPage({
     notFound();
   }
 
-  const totalSpent = user.orders.reduce((sum, o) => sum + o.total, 0);
+  const totalSpent = (user.orders || []).reduce((sum: number, o: any) => sum + (Number(o?.total) || 0), 0);
 
   // Fetch emails sent to this customer
   const emails = await db.emailLog.findMany({
@@ -133,11 +133,11 @@ export default async function AdminCustomerDetailPage({
                   </td>
                 </tr>
               ) : (
-                user.orders.map((o) => (
+                user.orders.map((o: any) => (
                   <tr key={o.id} className="hover:bg-zinc-800/30 transition-colors">
                     <td className="py-3.5 font-mono font-bold text-white">{o.orderNumber}</td>
                     <td className="py-3.5 text-zinc-400">{formatDate(o.createdAt)}</td>
-                    <td className="py-3.5 text-zinc-300">{o.items.length} pair(s)</td>
+                    <td className="py-3.5 text-zinc-300">{o.items?.length || 0} pair(s)</td>
                     <td className="py-3.5 font-mono font-bold text-white">{formatPrice(o.total)}</td>
                     <td className="py-3.5 text-zinc-400 font-mono text-[10px]">{o.paymentMethod}</td>
                     <td className="py-3.5">
@@ -174,7 +174,7 @@ export default async function AdminCustomerDetailPage({
             {user.activities.length === 0 ? (
               <p className="text-xs text-zinc-500 py-4 text-center">No activity recorded yet.</p>
             ) : (
-              user.activities.map((act) => (
+              user.activities.map((act: any) => (
                 <div
                   key={act.id}
                   className="p-3 rounded-2xl bg-zinc-950 border border-zinc-800 text-xs flex items-center justify-between"

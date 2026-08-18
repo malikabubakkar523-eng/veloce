@@ -69,7 +69,7 @@ export default async function AdminOrderDetailPage({
               Ordered Items ({order.items.length})
             </h3>
             <div className="space-y-3">
-              {order.items.map((item) => (
+              {(order.items || []).map((item: any) => (
                 <div
                   key={item.id}
                   className="flex items-center gap-4 p-3.5 rounded-2xl bg-zinc-950 border border-zinc-800"

@@ -145,8 +145,8 @@ export default async function AdminProductsPage({
                   </td>
                 </tr>
               ) : (
-                products.map((p) => {
-                  const totalStock = p.sizes.reduce((sum, s) => sum + s.stock, 0);
+                products.map((p: any) => {
+                  const totalStock = (p.sizes || []).reduce((sum: number, s: any) => sum + (Number(s?.stock) || 0), 0);
                   const img =
                     p.images[0]?.url ||
                     "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80";

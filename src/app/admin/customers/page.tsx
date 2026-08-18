@@ -60,9 +60,9 @@ export default async function AdminCustomersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800/60">
-              {users.map((u) => {
-                const totalOrders = u.orders.length;
-                const lifetimeSpend = u.orders.reduce((sum, o) => sum + o.total, 0);
+              {users.map((u: any) => {
+                const totalOrders = u.orders?.length || 0;
+                const lifetimeSpend = (u.orders || []).reduce((sum: number, o: any) => sum + (Number(o?.total) || 0), 0);
 
                 return (
                   <tr key={u.id} className="hover:bg-zinc-800/30 transition-colors">
