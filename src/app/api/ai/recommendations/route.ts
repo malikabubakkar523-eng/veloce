@@ -48,25 +48,41 @@ export async function GET(req: NextRequest) {
       sku: p.sku,
     }));
 
-    // 2. Identify customer's favorited shoe IDs (from DB or client query param)
+    // 2. Identify customer's favorited shoe IDs and onboarding category preferences
     let userFavoriteIds: string[] = [...requestedWishlistIds];
+    let userPreferredCategories: string[] = [];
 
     if (session?.id) {
-      const dbWishlistItems = await db.wishlistItem.findMany({
-        where: { userId: session.id },
-        select: { productId: true },
-      });
+      const [dbWishlistItems, userData] = await Promise.all([
+        db.wishlistItem.findMany({
+          where: { userId: session.id },
+          select: { productId: true },
+        }),
+        db.user.findUnique({
+          where: { id: session.id },
+          select: { preferredCategories: true },
+        }),
+      ]);
+
       const dbIds = dbWishlistItems.map((w) => w.productId);
       userFavoriteIds = Array.from(new Set([...userFavoriteIds, ...dbIds]));
+      if (userData?.preferredCategories && Array.isArray(userData.preferredCategories)) {
+        userPreferredCategories = userData.preferredCategories;
+      }
     }
 
     const favoriteProducts = catalogProducts.filter((p) => userFavoriteIds.includes(p.id));
 
-    // 3. Generate AI Personalized Recommendations
-    const results = generatePersonalizedRecommendations(catalogProducts, favoriteProducts, {
-      limit: 8,
-      newDropsLimit: 4,
-    });
+    // 3. Generate AI Personalized Recommendations (Fusing Onboarding + Favorites)
+    const results = generatePersonalizedRecommendations(
+      catalogProducts,
+      favoriteProducts,
+      userPreferredCategories,
+      {
+        limit: 8,
+        newDropsLimit: 4,
+      }
+    );
 
     return NextResponse.json({
       success: true,
@@ -130,25 +146,41 @@ export async function POST(req: NextRequest) {
       sku: p.sku,
     }));
 
-    // 2. Identify customer's favorited shoe IDs
+    // 2. Identify customer's favorited shoe IDs and onboarding preferences
     let userFavoriteIds: string[] = Array.isArray(wishlistIds) ? [...wishlistIds] : [];
+    let userPreferredCategories: string[] = [];
 
     if (session?.id) {
-      const dbWishlistItems = await db.wishlistItem.findMany({
-        where: { userId: session.id },
-        select: { productId: true },
-      });
+      const [dbWishlistItems, userData] = await Promise.all([
+        db.wishlistItem.findMany({
+          where: { userId: session.id },
+          select: { productId: true },
+        }),
+        db.user.findUnique({
+          where: { id: session.id },
+          select: { preferredCategories: true },
+        }),
+      ]);
+
       const dbIds = dbWishlistItems.map((w) => w.productId);
       userFavoriteIds = Array.from(new Set([...userFavoriteIds, ...dbIds]));
+      if (userData?.preferredCategories && Array.isArray(userData.preferredCategories)) {
+        userPreferredCategories = userData.preferredCategories;
+      }
     }
 
     const favoriteProducts = catalogProducts.filter((p) => userFavoriteIds.includes(p.id));
 
-    // 3. Generate AI Personalized Recommendations
-    const results = generatePersonalizedRecommendations(catalogProducts, favoriteProducts, {
-      limit: 8,
-      newDropsLimit: 4,
-    });
+    // 3. Generate AI Personalized Recommendations (Fusing Onboarding + Favorites)
+    const results = generatePersonalizedRecommendations(
+      catalogProducts,
+      favoriteProducts,
+      userPreferredCategories,
+      {
+        limit: 8,
+        newDropsLimit: 4,
+      }
+    );
 
     return NextResponse.json({
       success: true,

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useToast } from "@/components/ui/ToastProvider";
-import { User, Lock, Bell, Check, Shield, Camera, Mail } from "lucide-react";
+import { User, Lock, Bell, Check, Shield, Camera, Mail, Sparkles, Brain } from "lucide-react";
 
 interface AccountSettingsClientProps {
   user: {
@@ -12,12 +12,34 @@ interface AccountSettingsClientProps {
     email: string;
     phone: string | null;
     avatar: string | null;
+    preferredCategories?: string[];
+    referralSource?: string | null;
   };
 }
 
+const SETTINGS_SHOE_TYPES = [
+  { id: "sneakers", label: "Sneakers" },
+  { id: "running", label: "Running" },
+  { id: "sports", label: "Sports" },
+  { id: "lifestyle", label: "Lifestyle" },
+  { id: "formal", label: "Formal" },
+  { id: "boots", label: "Boots" },
+];
+
+const SETTINGS_REFERRAL_OPTIONS = [
+  "Instagram",
+  "Facebook",
+  "TikTok",
+  "Google",
+  "YouTube",
+  "Friend / Family",
+  "Advertisement",
+  "Other",
+];
+
 export function AccountSettingsClient({ user }: AccountSettingsClientProps) {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<"profile" | "security" | "notifications">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "security" | "notifications" | "ai_preferences">("profile");
 
   // Profile info state
   const [name, setName] = useState(user.name);
@@ -25,6 +47,13 @@ export function AccountSettingsClient({ user }: AccountSettingsClientProps) {
   const [avatar, setAvatar] = useState(user.avatar || "");
   const [avatarPreview, setAvatarPreview] = useState(user.avatar || "");
   const [savingProfile, setSavingProfile] = useState(false);
+
+  // AI Preferences state
+  const [preferredCategories, setPreferredCategories] = useState<string[]>(
+    user.preferredCategories && user.preferredCategories.length > 0 ? user.preferredCategories : ["running", "sneakers"]
+  );
+  const [referralSource, setReferralSource] = useState<string>(user.referralSource || "Instagram");
+  const [savingAiPrefs, setSavingAiPrefs] = useState(false);
 
   // Email state
   const [newEmail, setNewEmail] = useState("");
@@ -55,6 +84,46 @@ export function AccountSettingsClient({ user }: AccountSettingsClientProps) {
       })
       .catch(() => {});
   }, []);
+
+  const handleToggleAiCategory = (id: string) => {
+    if (preferredCategories.includes(id)) {
+      if (preferredCategories.length === 1) {
+        toast({ title: "Please keep at least 1 preference selected", type: "info" });
+        return;
+      }
+      setPreferredCategories(preferredCategories.filter((c) => c !== id));
+    } else {
+      setPreferredCategories([...preferredCategories, id]);
+    }
+  };
+
+  const handleSaveAiPreferences = async () => {
+    setSavingAiPrefs(true);
+    try {
+      const res = await fetch("/api/account/onboarding", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ preferredCategories, referralSource }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast({
+          title: "AI Preferences Updated",
+          description: "Your personalized recommendations will now prioritize these silhouettes.",
+          type: "success",
+        });
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("veloce:wishlist-changed", { detail: { productIds: [] } }));
+        }
+      } else {
+        toast({ title: "Error", description: "Failed to save AI preferences.", type: "error" });
+      }
+    } catch (e) {
+      toast({ title: "Network Error", type: "error" });
+    } finally {
+      setSavingAiPrefs(false);
+    }
+  };
 
   const handleSaveNotifications = async () => {
     setSavingNotifs(true);
@@ -190,6 +259,18 @@ export function AccountSettingsClient({ user }: AccountSettingsClientProps) {
         >
           <Bell className="w-4 h-4" />
           <span>Notification Preferences</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("ai_preferences")}
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all text-left ${
+            activeTab === "ai_preferences"
+              ? "bg-brand-500 text-white shadow-lg shadow-brand-500/20"
+              : "bg-zinc-900/50 hover:bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800/60"
+          }`}
+        >
+          <Brain className="w-4 h-4" />
+          <span>AI Style Preferences</span>
         </button>
       </div>
 
@@ -459,6 +540,88 @@ export function AccountSettingsClient({ user }: AccountSettingsClientProps) {
             >
               {savingNotifs ? "Saving Preferences..." : "Save Notification Preferences"}
             </button>
+          </div>
+        )}
+
+        {activeTab === "ai_preferences" && (
+          <div className="p-6 sm:p-8 rounded-3xl bg-zinc-900 border border-zinc-800 space-y-6 text-white">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 text-brand-500 text-[11px] font-bold uppercase tracking-wider mb-2">
+                <Brain className="w-3.5 h-3.5" />
+                <span>AI Style Calibration</span>
+              </div>
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                Footwear & Style Preferences
+              </h3>
+              <p className="text-xs text-zinc-400 mt-1">
+                Customize your shoe preferences to tune the neural recommendation engine on the homepage.
+              </p>
+            </div>
+
+            {/* Category Preferences */}
+            <div className="space-y-3">
+              <label className="block text-xs font-semibold text-zinc-300">
+                What type of shoes do you like? (Multi-select)
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                {SETTINGS_SHOE_TYPES.map((shoe) => {
+                  const isSelected = preferredCategories.includes(shoe.id);
+                  return (
+                    <button
+                      key={shoe.id}
+                      type="button"
+                      onClick={() => handleToggleAiCategory(shoe.id)}
+                      className={`p-3 rounded-xl border text-xs font-semibold transition-all flex items-center justify-between cursor-pointer ${
+                        isSelected
+                          ? "bg-brand-500 text-white border-brand-500 shadow-md shadow-brand-500/20"
+                          : "bg-zinc-950/60 border-zinc-800 text-zinc-300 hover:bg-zinc-800"
+                      }`}
+                    >
+                      <span>{shoe.label}</span>
+                      {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Referral Source */}
+            <div className="space-y-3 pt-4 border-t border-zinc-800">
+              <label className="block text-xs font-semibold text-zinc-300">
+                How did you hear about Veloce?
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {SETTINGS_REFERRAL_OPTIONS.map((opt) => {
+                  const isSelected = referralSource === opt;
+                  return (
+                    <button
+                      key={opt}
+                      type="button"
+                      onClick={() => setReferralSource(opt)}
+                      className={`py-2 px-3 rounded-xl border text-xs font-semibold transition-all flex items-center justify-between cursor-pointer ${
+                        isSelected
+                          ? "bg-brand-500 text-white border-brand-500 shadow-md shadow-brand-500/20"
+                          : "bg-zinc-950/60 border-zinc-800 text-zinc-300 hover:bg-zinc-800"
+                      }`}
+                    >
+                      <span className="truncate">{opt}</span>
+                      {isSelected && <Check className="w-3 h-3 stroke-[3] shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <button
+                type="button"
+                disabled={savingAiPrefs}
+                onClick={handleSaveAiPreferences}
+                className="px-6 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold shadow-md shadow-brand-500/20 transition-all disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+              >
+                {savingAiPrefs ? "Updating Recommendations..." : "Save AI Style Preferences"}
+              </button>
+            </div>
           </div>
         )}
       </div>

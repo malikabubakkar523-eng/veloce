@@ -13,20 +13,20 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("dark");
+  const [theme, setThemeState] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Read persisted theme from localStorage or system preference
+    // Read persisted theme from localStorage. Default is LIGHT mode.
     const saved = localStorage.getItem("veloce_theme") as Theme | null;
-    if (saved === "light" || saved === "dark") {
+    if (saved === "dark" || saved === "light") {
       setThemeState(saved);
       document.documentElement.classList.toggle("dark", saved === "dark");
     } else {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const initial = prefersDark ? "dark" : "dark"; // Default to dark luxury theme
+      // First-time visit: strictly default to Light Mode
+      const initial: Theme = "light";
       setThemeState(initial);
-      document.documentElement.classList.toggle("dark", initial === "dark");
+      document.documentElement.classList.remove("dark");
     }
     setMounted(true);
   }, []);

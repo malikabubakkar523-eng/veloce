@@ -123,10 +123,52 @@ export function extractProductKeywords(product: ProductFeature): string[] {
 }
 
 /**
- * Builds a multi-dimensional AI style preference vector from a customer's favorited shoes.
+ * Maps onboarding category keys to category names, database slugs, and keywords.
  */
-export function computeUserStyleVector(favoriteProducts: ProductFeature[]): UserStyleVector | null {
-  if (!favoriteProducts || favoriteProducts.length === 0) {
+export const CATEGORY_SYNONYMS: Record<string, string[]> = {
+  running: ["running", "road racer", "marathon", "tempo", "supercritical", "carbon plate", "racer", "speed"],
+  sneakers: ["sneakers", "sneaker", "streetwear", "lifestyle", "low-top", "high-top", "air", "retro"],
+  sports: ["sports", "training & gym", "training", "basketball", "gym", "court", "athletic", "workout", "cross-trainer"],
+  lifestyle: ["lifestyle", "casual & loafers", "casual", "sneakers", "everyday", "urban", "comfort", "retro"],
+  formal: ["formal", "casual & loafers", "formal & loafers", "loafers", "blake welt", "leather", "dress", "oxford", "tread"],
+  boots: ["boots", "rugged", "chelsea", "combat", "storm welt", "goodyear", "waterproof", "leather boot"],
+};
+
+/**
+ * Returns matching affinity keys for a given product based on its category, name, and details.
+ */
+export function getProductCategoryAffinities(product: ProductFeature): string[] {
+  const text = `${product.name} ${product.categoryName || ""} ${product.categoryId || ""} ${product.description || ""} ${product.details || ""}`.toLowerCase();
+  const matched = new Set<string>();
+
+  for (const [key, synonyms] of Object.entries(CATEGORY_SYNONYMS)) {
+    for (const syn of synonyms) {
+      if (text.includes(syn)) {
+        matched.add(key);
+        break;
+      }
+    }
+  }
+
+  // Fallback to exact category name if nothing matched
+  if (matched.size === 0 && product.categoryName) {
+    matched.add(product.categoryName.toLowerCase());
+  }
+
+  return Array.from(matched);
+}
+
+/**
+ * Builds a multi-dimensional AI style preference vector from a customer's favorited shoes and onboarding preferences.
+ */
+export function computeUserStyleVector(
+  favoriteProducts: ProductFeature[],
+  preferredCategories?: string[]
+): UserStyleVector | null {
+  const hasFavorites = favoriteProducts && favoriteProducts.length > 0;
+  const hasOnboarding = preferredCategories && preferredCategories.length > 0;
+
+  if (!hasFavorites && !hasOnboarding) {
     return null;
   }
 
@@ -136,38 +178,64 @@ export function computeUserStyleVector(favoriteProducts: ProductFeature[]): User
   const keywordCounts: Record<string, number> = {};
   let totalPrice = 0;
 
-  for (const p of favoriteProducts) {
-    totalPrice += p.price || 0;
+  // 1. Process Favorited Shoes (Dynamic ongoing learning)
+  if (hasFavorites) {
+    for (const p of favoriteProducts) {
+      totalPrice += p.price || 0;
 
-    // Category weighting
-    const cat = (p.categoryName || p.categoryId || "unknown").toLowerCase();
-    categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+      // Extract all matched affinity categories for the favorited shoe
+      const matchedCats = getProductCategoryAffinities(p);
+      for (const cat of matchedCats) {
+        // High weight for explicit user favorites
+        categoryCounts[cat] = (categoryCounts[cat] || 0) + 3;
+      }
 
-    // Brand weighting
-    if (p.brandName) {
-      const b = p.brandName.toLowerCase();
-      brandCounts[b] = (brandCounts[b] || 0) + 1;
-    }
+      // Exact raw category name
+      const rawCat = (p.categoryName || p.categoryId || "unknown").toLowerCase();
+      categoryCounts[rawCat] = (categoryCounts[rawCat] || 0) + 2;
 
-    // Color weighting
-    const colors = extractProductColors(p);
-    for (const c of colors) {
-      colorCounts[c] = (colorCounts[c] || 0) + 1;
-    }
+      // Brand weighting
+      if (p.brandName) {
+        const b = p.brandName.toLowerCase();
+        brandCounts[b] = (brandCounts[b] || 0) + 2;
+      }
 
-    // Technical keyword weighting
-    const kws = extractProductKeywords(p);
-    for (const kw of kws) {
-      keywordCounts[kw] = (keywordCounts[kw] || 0) + 1;
+      // Color weighting
+      const colors = extractProductColors(p);
+      for (const c of colors) {
+        colorCounts[c] = (colorCounts[c] || 0) + 1.5;
+      }
+
+      // Technical keyword weighting
+      const kws = extractProductKeywords(p);
+      for (const kw of kws) {
+        keywordCounts[kw] = (keywordCounts[kw] || 0) + 1;
+      }
     }
   }
 
-  const count = favoriteProducts.length;
+  // 2. Process Onboarding Preferred Categories (Inject strong baseline foundation)
+  if (hasOnboarding && preferredCategories) {
+    for (const rawCat of preferredCategories) {
+      const cat = rawCat.toLowerCase();
+      // Onboarding preference gives a solid baseline weight
+      categoryCounts[cat] = (categoryCounts[cat] || 0) + (hasFavorites ? 2.5 : 4);
+
+      // Also boost associated synonym tags
+      const synonyms = CATEGORY_SYNONYMS[cat] || [];
+      for (const syn of synonyms.slice(0, 2)) {
+        categoryCounts[syn] = (categoryCounts[syn] || 0) + (hasFavorites ? 1 : 2);
+      }
+    }
+  }
+
+  const count = (favoriteProducts?.length || 0) * 2 + (preferredCategories?.length || 0) * 2;
 
   // Normalize affinities between 0 and 1
   const categoryAffinities: Record<string, number> = {};
+  const totalCatSum = Object.values(categoryCounts).reduce((a, b) => a + b, 0) || 1;
   for (const [cat, num] of Object.entries(categoryCounts)) {
-    categoryAffinities[cat] = num / count;
+    categoryAffinities[cat] = num / totalCatSum;
   }
 
   const colorAffinities: Record<string, number> = {};
@@ -178,7 +246,7 @@ export function computeUserStyleVector(favoriteProducts: ProductFeature[]): User
 
   const brandAffinities: Record<string, number> = {};
   for (const [b, num] of Object.entries(brandCounts)) {
-    brandAffinities[b] = num / count;
+    brandAffinities[b] = num / Math.max(1, count);
   }
 
   // Extract top keywords sorted by frequency
@@ -191,8 +259,8 @@ export function computeUserStyleVector(favoriteProducts: ProductFeature[]): User
     categoryAffinities,
     colorAffinities,
     brandAffinities,
-    avgPricePreference: totalPrice / count,
-    favoriteProductIds: favoriteProducts.map((p) => p.id),
+    avgPricePreference: totalPrice / Math.max(1, favoriteProducts?.length || 1),
+    favoriteProductIds: (favoriteProducts || []).map((p) => p.id),
     topKeywords,
   };
 }
@@ -205,22 +273,34 @@ export function scoreProductSimilarity(
   product: ProductFeature,
   userVector: UserStyleVector
 ): { matchScore: number; matchReasons: string[]; primaryReason: string } {
-  // If the product is already in the user's wishlist, exclude or score specially
-  const isAlreadyFavorited = userVector.favoriteProductIds.includes(product.id);
-
   let score = 0;
   const reasons: string[] = [];
 
-  // 1. Category Match (Max 40 points)
-  const productCat = (product.categoryName || product.categoryId || "").toLowerCase();
-  const catAffinity = userVector.categoryAffinities[productCat] || 0;
-  if (catAffinity > 0) {
-    const catScore = Math.round(catAffinity * 40);
-    score += catScore;
-    reasons.push(`Matches your love for ${product.categoryName || productCat} footwear`);
+  // 1. Category & Style Match (Max 45 points)
+  const matchedCats = getProductCategoryAffinities(product);
+  const rawCat = (product.categoryName || product.categoryId || "").toLowerCase();
+  if (!matchedCats.includes(rawCat) && rawCat) {
+    matchedCats.push(rawCat);
   }
 
-  // 2. Color Aesthetics Match (Max 30 points)
+  let highestCatAffinity = 0;
+  let matchedCatName = product.categoryName || "footwear";
+
+  for (const c of matchedCats) {
+    const aff = userVector.categoryAffinities[c] || 0;
+    if (aff > highestCatAffinity) {
+      highestCatAffinity = aff;
+      matchedCatName = c.charAt(0).toUpperCase() + c.slice(1);
+    }
+  }
+
+  if (highestCatAffinity > 0) {
+    const catScore = Math.min(45, Math.round(highestCatAffinity * 55) + 15);
+    score += catScore;
+    reasons.push(`Matches your preference for ${product.categoryName || matchedCatName} footwear`);
+  }
+
+  // 2. Color Aesthetics Match (Max 25 points)
   const productColors = extractProductColors(product);
   let highestColorAffinity = 0;
   let matchedColor = "";
@@ -233,7 +313,7 @@ export function scoreProductSimilarity(
   }
 
   if (highestColorAffinity > 0) {
-    const colorScore = Math.round(highestColorAffinity * 30);
+    const colorScore = Math.min(25, Math.round(highestColorAffinity * 30));
     score += colorScore;
     reasons.push(`Aesthetic match: ${matchedColor.toUpperCase()} tone palette`);
   }
@@ -257,7 +337,7 @@ export function scoreProductSimilarity(
     }
   }
 
-  // Base relevance boost for high-rated / popular shoes if some baseline similarity exists
+  // Base relevance boost for high-rated / popular / new shoes if some baseline similarity exists
   if (score > 15) {
     if (product.rating && product.rating >= 4.8) {
       score += 5;
@@ -265,21 +345,24 @@ export function scoreProductSimilarity(
     if (product.isNew) {
       score += 5;
     }
+    if (product.isFeatured) {
+      score += 3;
+    }
   }
 
-  // Bound score between 65% and 99% for relevant items to give intuitive confidence metrics
+  // Calibrate final score smoothly
   let finalScore = 0;
-  if (score >= 20) {
-    finalScore = Math.min(99, Math.max(72, Math.round(65 + (score / 100) * 34)));
+  if (score >= 25) {
+    finalScore = Math.min(99, Math.max(78, Math.round(68 + (score / 100) * 32)));
   } else if (score > 0) {
-    finalScore = Math.min(74, Math.max(55, Math.round(50 + score)));
+    finalScore = Math.min(76, Math.max(55, Math.round(50 + score)));
   } else {
-    finalScore = 40; // baseline generic
+    finalScore = 45; // baseline
   }
 
   // Select the single most impactful primary reason
-  let primaryReason = reasons[0] || "Curated based on trending styles";
-  if (matchedColor && catAffinity > 0) {
+  let primaryReason = reasons[0] || "Curated based on your style profile";
+  if (matchedColor && highestCatAffinity > 0) {
     primaryReason = `Matches your preference for ${matchedColor.toUpperCase()} ${product.categoryName || "performance"} silhouettes`;
   } else if (reasons.length > 0) {
     primaryReason = reasons[0];
@@ -298,6 +381,7 @@ export function scoreProductSimilarity(
 export function generatePersonalizedRecommendations(
   catalogProducts: ProductFeature[],
   favoriteProducts: ProductFeature[],
+  preferredCategories?: string[],
   options?: { limit?: number; newDropsLimit?: number }
 ): {
   recommendedForYou: RecommendationMatch[];
@@ -309,7 +393,7 @@ export function generatePersonalizedRecommendations(
   const limit = options?.limit || 8;
   const newDropsLimit = options?.newDropsLimit || 4;
 
-  const userVector = computeUserStyleVector(favoriteProducts);
+  const userVector = computeUserStyleVector(favoriteProducts, preferredCategories);
 
   // If user has no favorites yet, return curated trending/featured items
   if (!userVector) {

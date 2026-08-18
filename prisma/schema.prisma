@@ -22,6 +22,9 @@ model User {
   orderNotifs   Boolean        @default(true)
   dealNotifs    Boolean        @default(true)
   promoEmails   Boolean        @default(true)
+  preferredCategories String[] @default([])
+  referralSource String?
+  isOnboarded   Boolean        @default(false)
   addresses     Address[]
   cartItems     CartItem[]
   notifications Notification[]
@@ -261,6 +264,7 @@ model Deal {
   bannerImage           String?
   discountPercent       Float?
   fixedDiscount         Float?
+  couponCode            String?
   startDate             DateTime              @default(now())
   endDate               DateTime
   isActive              Boolean               @default(true)

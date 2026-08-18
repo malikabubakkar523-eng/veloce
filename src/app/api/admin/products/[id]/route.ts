@@ -96,6 +96,12 @@ export async function PATCH(
       }
     }
 
+    // Fetch previous state for price drop & back-in-stock notifications
+    const existingProduct = await db.product.findUnique({
+      where: { id: params.id },
+      include: { sizes: true },
+    });
+
     // Update product core fields
     const product = await db.product.update({
       where: { id: params.id },
@@ -115,13 +121,16 @@ export async function PATCH(
     });
 
     // If sizes provided, update size stock
+    let updatedTotalStock = 0;
     if (sizes && Array.isArray(sizes)) {
       for (const s of sizes) {
+        const stockNum = Number(s.stock) || 0;
+        updatedTotalStock += stockNum;
         if (s.id) {
           await db.productSize.update({
             where: { id: s.id },
             data: {
-              stock: Number(s.stock) || 0,
+              stock: stockNum,
               sku: s.sku || undefined,
             },
           });
@@ -130,7 +139,7 @@ export async function PATCH(
             data: {
               productId: params.id,
               size: String(s.size),
-              stock: Number(s.stock) || 0,
+              stock: stockNum,
               sku: `${product.sku}-${s.size}`,
             },
           });
@@ -150,6 +159,59 @@ export async function PATCH(
           order: idx,
         })),
       });
+    }
+
+    // -------------------------------------------------------------
+    // PERSONALIZED WISHLIST NOTIFICATIONS (Price Drop & Back in Stock)
+    // -------------------------------------------------------------
+    try {
+      const favoritedUsers = await db.wishlistItem.findMany({
+        where: { productId: params.id },
+        select: { userId: true },
+      });
+
+      if (favoritedUsers.length > 0 && existingProduct) {
+        const prevEffective = existingProduct.salePrice || existingProduct.price;
+        const newEffective = product.salePrice || product.price;
+        const isPriceDropped =
+          (product.salePrice && !existingProduct.salePrice) ||
+          newEffective < prevEffective;
+
+        const prevStock = existingProduct.sizes.reduce((sum, sz) => sum + sz.stock, 0);
+        const isBackInStock = prevStock === 0 && updatedTotalStock > 0;
+
+        for (const userItem of favoritedUsers) {
+          // 1. Price Drop Notification
+          if (isPriceDropped) {
+            await db.notification.create({
+              data: {
+                userId: userItem.userId,
+                title: `Price Drop: ${product.name}`,
+                message: "Your favorite shoe is now on sale.",
+                type: "PROMOTION",
+                productId: product.id,
+                isRead: false,
+              },
+            });
+          }
+
+          // 2. Back In Stock Notification
+          if (isBackInStock) {
+            await db.notification.create({
+              data: {
+                userId: userItem.userId,
+                title: `Back in Stock: ${product.name}`,
+                message: "Your favorite shoe is back in stock.",
+                type: "SYSTEM",
+                productId: product.id,
+                isRead: false,
+              },
+            });
+          }
+        }
+      }
+    } catch (notifErr) {
+      console.error("Personalized notification dispatch error:", notifErr);
     }
 
     broadcastContentUpdate("PRODUCT");

@@ -182,6 +182,8 @@ export function NotificationDropdown() {
               notifications.map((n) => {
                 const targetHref = n.orderId
                   ? `/account/orders/${n.orderId}`
+                  : n.productId
+                  ? `/product/${n.productId}`
                   : n.type === "DEAL" || n.dealId
                   ? "/shop"
                   : undefined;
@@ -218,7 +220,7 @@ export function NotificationDropdown() {
                         </span>
                         {targetHref && (
                           <span className="text-[10px] text-brand-500 font-bold hover:underline flex items-center gap-0.5">
-                            {n.type === "DEAL" ? "Shop Deal" : "Track Order"} →
+                            {n.productId ? "View Shoe" : n.type === "DEAL" ? "Shop Deal" : "Track Order"} →
                           </span>
                         )}
                       </div>

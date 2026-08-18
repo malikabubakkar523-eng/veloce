@@ -70,12 +70,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       await db.notification.createMany({
         data: inAppCustomersToNotify.map((c) => ({
           userId: c.id,
-          title: `🔥 ${deal.badge || "LIMITED DEAL"}: ${deal.title}`,
-          message:
-            deal.subtitle ||
-            `Special limited-time footwear allocation live now. Save ${
-              deal.discountPercent ? `${deal.discountPercent}%` : "big"
-            }.`,
+          title: `Deal Available: ${deal.title}`,
+          message: "A new deal is available on a shoe you like.",
           type: "DEAL",
           dealId: deal.id,
           isRead: false,

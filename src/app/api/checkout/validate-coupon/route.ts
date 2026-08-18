@@ -10,9 +10,39 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Coupon code is required." }, { status: 400 });
     }
 
-    const coupon = await db.coupon.findUnique({
-      where: { code: code.toUpperCase().trim() },
+    const cleanCode = code.toUpperCase().trim();
+    let coupon = await db.coupon.findUnique({
+      where: { code: cleanCode },
     });
+
+    // If not found in Coupon table, check if it is an active Deal couponCode
+    if (!coupon) {
+      const activeDeal = await db.deal.findFirst({
+        where: {
+          couponCode: cleanCode,
+          isActive: true,
+          endDate: { gt: new Date() },
+        },
+      });
+
+      if (activeDeal) {
+        coupon = {
+          id: activeDeal.id,
+          code: activeDeal.couponCode || cleanCode,
+          description: activeDeal.title,
+          discountType: activeDeal.discountPercent ? "PERCENTAGE" : "FIXED",
+          discountValue: activeDeal.discountPercent || activeDeal.fixedDiscount || 20,
+          minOrderAmount: null,
+          maxDiscount: null,
+          usageLimit: null,
+          usedCount: 0,
+          expiresAt: activeDeal.endDate,
+          isActive: activeDeal.isActive,
+          createdAt: activeDeal.createdAt,
+          updatedAt: activeDeal.updatedAt,
+        };
+      }
+    }
 
     if (!coupon || !coupon.isActive) {
       return NextResponse.json({ error: "Invalid or inactive coupon code." }, { status: 400 });

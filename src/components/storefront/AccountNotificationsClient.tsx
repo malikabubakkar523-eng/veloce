@@ -186,6 +186,8 @@ export function AccountNotificationsClient({
           {filteredNotifs.map((n) => {
             const targetHref = n.orderId
               ? `/account/orders/${n.orderId}`
+              : n.productId
+              ? `/product/${n.productId}`
               : n.type === "DEAL" || n.dealId
               ? "/shop"
               : undefined;
@@ -234,7 +236,7 @@ export function AccountNotificationsClient({
                     href={targetHref}
                     className="self-start sm:self-center px-4 py-2 rounded-xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-xs font-bold flex items-center gap-1.5 shrink-0 hover:opacity-90 transition-opacity shadow-xs"
                   >
-                    <span>{n.type === "DEAL" ? "Explore Deal" : "Track Order"}</span>
+                    <span>{n.productId ? "View Shoe" : n.type === "DEAL" ? "Explore Deal" : "Track Order"}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 )}

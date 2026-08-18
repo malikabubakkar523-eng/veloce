@@ -20,6 +20,8 @@ export default async function AccountSettingsPage() {
       email: true,
       phone: true,
       avatar: true,
+      preferredCategories: true,
+      referralSource: true,
     },
   });
 
