@@ -50,6 +50,25 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
   const currentStock = currentSizeObj ? currentSizeObj.stock : 0;
   const isOutOfStock = currentStock <= 0;
 
+  React.useEffect(() => {
+    try {
+      const raw = localStorage.getItem("veloce_recently_viewed");
+      let list = raw ? JSON.parse(raw) : [];
+      list = list.filter((p: any) => p.id !== product.id);
+      list.unshift({
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        price: product.price,
+        salePrice: product.salePrice,
+        image: primaryImage,
+        brandName: product.brand?.name,
+        rating: product.rating,
+      });
+      localStorage.setItem("veloce_recently_viewed", JSON.stringify(list.slice(0, 8)));
+    } catch (e) {}
+  }, [product.id, primaryImage]);
+
   const handleAddToCart = () => {
     if (isOutOfStock) {
       toast({

@@ -378,6 +378,26 @@ model HeroBanner {
   @@index([isActive, order])
 }
 
+model HomeVideo {
+  id               String   @id @default(uuid())
+  title            String
+  subtitle         String?
+  badge            String?  @default("CINEMATIC FOOTWEAR ATELIER")
+  videoUrl         String
+  posterUrl        String?
+  ctaText          String?  @default("EXPLORE COLLECTION")
+  ctaLink          String?  @default("/shop")
+  secondaryCtaText String?  @default("View In Lookbook")
+  secondaryCtaLink String?  @default("/gallery")
+  specs            String?  // JSON stringified tech specs
+  order            Int      @default(0)
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([isActive, order])
+}
+
 model ShopBanner {
   id        String   @id @default("default")
   badge     String?  @default("NEW ARRIVALS • SPRING/SUMMER 2026")

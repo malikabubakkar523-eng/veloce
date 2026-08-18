@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { AlertCircle, Ruler, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SizeGuideModal } from "@/components/product/SizeGuideModal";
 
 interface SizeItem {
   size: string;
@@ -20,6 +21,7 @@ export function ProductSizeSelector({
   selectedSize,
   onSelectSize,
 }: ProductSizeSelectorProps) {
+  const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const currentSelectedStock = sizes.find((s) => s.size === selectedSize)?.stock ?? 0;
 
   return (
@@ -39,13 +41,15 @@ export function ProductSizeSelector({
 
         <button
           type="button"
-          onClick={() => alert("Standard EU / US Sizing: True to size. For wide feet, consider half a size up.")}
-          className="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200 underline flex items-center gap-1"
+          onClick={() => setSizeGuideOpen(true)}
+          className="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200 underline flex items-center gap-1 cursor-pointer transition-colors"
         >
-          <Ruler className="w-3.5 h-3.5" />
-          Size Guide
+          <Ruler className="w-3.5 h-3.5 text-brand-500" />
+          <span>Size Guide & Fit</span>
         </button>
       </div>
+
+      <SizeGuideModal isOpen={sizeGuideOpen} onClose={() => setSizeGuideOpen(false)} />
 
       {/* Sizes Grid */}
       <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">

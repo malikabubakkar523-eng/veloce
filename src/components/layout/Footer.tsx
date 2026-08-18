@@ -57,12 +57,11 @@ export function Footer() {
           {/* Brand Info */}
           <div className="col-span-2">
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="relative h-8 w-36 flex items-center transition-transform group-hover:scale-105">
+              <div className="relative h-10 sm:h-12 w-44 sm:w-56 flex items-center transition-transform group-hover:scale-105">
                 <Image
                   src="/images/veloce-logo.svg"
                   alt="VELOCE"
-                  width={144}
-                  height={32}
+                  fill
                   className="object-contain object-left"
                 />
               </div>

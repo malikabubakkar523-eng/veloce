@@ -91,16 +91,16 @@ export function Navbar({ user, onOpenSearch }: NavbarProps) {
       >
         <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 flex items-center justify-between w-full">
           {/* Left: Brand Logo */}
-          <Link href="/" className="flex items-center gap-1.5 group shrink-0" aria-label="VELOCE Home">
-            <div className="relative h-7 xs:h-8 sm:h-9 w-28 xs:w-32 sm:w-40 flex items-center transition-transform group-hover:scale-105">
+          <Link href="/" className="flex items-center gap-1.5 group shrink-0 py-0.5" aria-label="VELOCE Home">
+            <div className="relative h-9 xs:h-10 sm:h-11 md:h-12 w-36 xs:w-44 sm:w-52 md:w-60 flex items-center transition-transform duration-300 group-hover:scale-[1.03]">
               {/* Dark mode logo */}
               <Image
                 src="/images/veloce-logo.svg"
                 alt="VELOCE"
                 fill
                 priority
-                sizes="(max-width: 640px) 128px, 160px"
-                className="object-contain object-left hidden dark:block"
+                sizes="(max-width: 640px) 176px, (max-width: 1024px) 208px, 240px"
+                className="object-contain object-left hidden dark:block drop-shadow-sm"
               />
               {/* Light mode logo */}
               <Image
@@ -108,8 +108,8 @@ export function Navbar({ user, onOpenSearch }: NavbarProps) {
                 alt="VELOCE"
                 fill
                 priority
-                sizes="(max-width: 640px) 128px, 160px"
-                className="object-contain object-left block dark:hidden"
+                sizes="(max-width: 640px) 176px, (max-width: 1024px) 208px, 240px"
+                className="object-contain object-left block dark:hidden drop-shadow-sm"
               />
             </div>
           </Link>

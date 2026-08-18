@@ -32,6 +32,7 @@ export default async function HomePage() {
   let activeDeal: any = null;
   let saleProducts: any[] = [];
   let galleryItems: any[] = [];
+  let homeVideo: any = null;
 
   try {
     const data = await Promise.all([
@@ -94,6 +95,11 @@ export default async function HomePage() {
         where: { isActive: true },
         orderBy: [{ order: "asc" }, { createdAt: "desc" }],
       }),
+      // Active Homepage Video Showcase
+      db.homeVideo.findFirst({
+        where: { isActive: true },
+        orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+      }),
     ]);
 
     heroBanners = data[0];
@@ -103,6 +109,7 @@ export default async function HomePage() {
     activeDeal = data[4];
     saleProducts = data[5];
     galleryItems = data[6] && data[6].length > 0 ? data[6] : CURATED_GALLERY_ITEMS;
+    homeVideo = data[7] || null;
   } catch (error) {
     console.warn("⚠️ [Prerender Notice] Database query fallback triggered:", error);
     galleryItems = CURATED_GALLERY_ITEMS;
@@ -399,7 +406,7 @@ export default async function HomePage() {
       <AINewDropsMatchingSection />
 
       {/* 9. CINEMATIC ATHLETIC MOTION & CARBON LAB VIDEO SHOWCASE */}
-      <CinematicFootwearShowcase />
+      <CinematicFootwearShowcase video={homeVideo} />
 
       {/* 10. SS26 LOOKBOOK & RUNWAY GALLERY SHOWCASE (Men, Women, and Kids Spotlights) */}
       <HomeGalleryShowcase items={galleryItems} />

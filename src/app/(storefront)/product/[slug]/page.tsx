@@ -4,6 +4,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { ProductDetailsClient } from "@/components/product/ProductDetailsClient";
 import { ProductCard } from "@/components/storefront/ProductCard";
+import { RecentlyViewedSection } from "@/components/product/RecentlyViewedSection";
 import { ChevronRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -100,6 +101,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </section>
       )}
+
+      {/* Recently Viewed Footwear Carousel */}
+      <RecentlyViewedSection currentProductId={product.id} />
     </div>
   );
 }

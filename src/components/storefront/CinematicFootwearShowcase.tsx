@@ -18,16 +18,42 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-export function CinematicFootwearShowcase() {
+export interface VideoShowcaseProps {
+  video?: {
+    id?: string;
+    title: string;
+    subtitle?: string | null;
+    badge?: string | null;
+    videoUrl: string;
+    posterUrl?: string | null;
+    ctaText?: string | null;
+    ctaLink?: string | null;
+    secondaryCtaText?: string | null;
+    secondaryCtaLink?: string | null;
+  } | null;
+}
+
+export function CinematicFootwearShowcase({ video }: VideoShowcaseProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
   const [activeSpec, setActiveSpec] = useState<number>(0);
 
   const videoUrl =
+    video?.videoUrl ||
     "https://assets.mixkit.co/videos/preview/mixkit-athlete-getting-ready-to-run-on-the-track-42525-large.mp4";
   const posterUrl =
+    video?.posterUrl ||
     "https://images.unsplash.com/photo-1552346154-21d32810aba3?w=1600&q=85";
+  const title = video?.title || "ENGINEERED TO OUTPACE GRAVITY.";
+  const subtitle =
+    video?.subtitle ||
+    "Every curve, seam, and carbon fibre strand is optimized inside our high-velocity biomechanical test chambers. Experience uninterrupted forward thrust.";
+  const badge = video?.badge || "PROPULSION IN MOTION";
+  const ctaText = video?.ctaText || "EXPLORE MARATHON RACERS";
+  const ctaLink = video?.ctaLink || "/shop?category=running";
+  const secondaryCtaText = video?.secondaryCtaText || "View Full Lookbook";
+  const secondaryCtaLink = video?.secondaryCtaLink || "/gallery";
 
   const specs = [
     {
@@ -116,21 +142,22 @@ export function CinematicFootwearShowcase() {
 
           {/* Foreground Overlay Content */}
           <div className="relative z-10 max-w-xl p-6 sm:p-12 lg:p-16 space-y-4 text-white text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/20 text-brand-400 text-[10.5px] sm:text-xs font-bold uppercase tracking-wider border border-brand-500/30 backdrop-blur-md">
-              <Flame className="w-3.5 h-3.5 text-brand-500" />
-              <span>PROPULSION IN MOTION</span>
-            </div>
+            {badge && (
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/20 text-brand-400 text-[10.5px] sm:text-xs font-bold uppercase tracking-wider border border-brand-500/30 backdrop-blur-md">
+                <Flame className="w-3.5 h-3.5 text-brand-500" />
+                <span>{badge}</span>
+              </div>
+            )}
 
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-display font-black tracking-tight leading-[1.1] text-white">
-              ENGINEERED TO <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-200 to-zinc-500">
-                OUTPACE GRAVITY.
-              </span>
+              {title}
             </h2>
 
-            <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed max-w-md">
-              Every curve, seam, and carbon fibre strand is optimized inside our high-velocity biomechanical test chambers. Experience uninterrupted forward thrust.
-            </p>
+            {subtitle && (
+              <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed max-w-md">
+                {subtitle}
+              </p>
+            )}
 
             {/* Interactive Specs Switcher Pills */}
             <div className="pt-2 flex flex-wrap gap-2">
@@ -173,19 +200,21 @@ export function CinematicFootwearShowcase() {
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <Link
-                href="/shop?category=running"
+                href={ctaLink}
                 className="px-6 py-3 rounded-full bg-brand-500 hover:bg-brand-600 text-white text-xs sm:text-sm font-bold shadow-lg shadow-brand-500/25 hover:scale-105 transition-all flex items-center gap-2 group cursor-pointer"
               >
-                <span>EXPLORE MARATHON RACERS</span>
+                <span>{ctaText}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
 
-              <Link
-                href="/gallery"
-                className="px-5 py-3 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-white text-xs font-semibold border border-zinc-700 backdrop-blur-md flex items-center gap-1.5 transition-colors"
-              >
-                <span>View Full Lookbook</span>
-              </Link>
+              {secondaryCtaLink && (
+                <Link
+                  href={secondaryCtaLink}
+                  className="px-5 py-3 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-white text-xs font-semibold border border-zinc-700 backdrop-blur-md flex items-center gap-1.5 transition-colors"
+                >
+                  <span>{secondaryCtaText || "View In Lookbook"}</span>
+                </Link>
+              )}
             </div>
           </div>
         </div>

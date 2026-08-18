@@ -18,6 +18,7 @@ import {
   Activity,
   Settings,
   Store,
+  Film,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -37,6 +38,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
     { label: "Orders", href: "/admin/orders", icon: ShoppingBag },
     { label: "Inventory", href: "/admin/inventory", icon: Boxes },
     { label: "Hero Banners", href: "/admin/hero", icon: Layers },
+    { label: "Cinematic Videos", href: "/admin/videos", icon: Film },
     { label: "Shop Banner", href: "/admin/shop-banner", icon: Store },
     { label: "Lookbook Gallery", href: "/admin/gallery", icon: Camera },
     { label: "Deals & Offers", href: "/admin/deals", icon: Flame },
@@ -57,19 +59,19 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
       {/* Top Brand */}
       <div>
         <div className="p-5 flex items-center justify-between border-b border-zinc-800">
-          <Link href="/admin" className="flex items-center gap-2.5 overflow-hidden group">
-            <div className="relative w-8 h-8 rounded-lg bg-zinc-950 border border-zinc-800 flex items-center justify-center shrink-0 p-1">
+          <Link href="/admin" className="flex items-center gap-3 overflow-hidden group">
+            <div className="relative w-9 h-9 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-center shrink-0 p-1.5 shadow-md">
               <Image
                 src="/images/veloce-logo-icon.svg"
                 alt="VELOCE"
-                width={26}
-                height={26}
+                width={30}
+                height={30}
                 className="object-contain"
               />
             </div>
             {!collapsed && (
               <div className="flex flex-col">
-                <div className="relative h-6 w-28">
+                <div className="relative h-7 w-32">
                   <Image
                     src="/images/veloce-logo.svg"
                     alt="VELOCE"
