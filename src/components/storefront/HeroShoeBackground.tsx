@@ -183,7 +183,7 @@ export function HeroShoeBackground() {
           </AnimatePresence>
 
           {/* Interactive Slide Controls & Indicators */}
-          <div className="absolute -bottom-10 right-1/2 translate-x-1/2 sm:translate-x-0 sm:right-8 z-30 flex items-center gap-2 pointer-events-auto bg-zinc-950/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-zinc-800/80 shadow-lg">
+          <div className="absolute -bottom-6 xs:-bottom-8 sm:bottom-0 right-1/2 translate-x-1/2 sm:translate-x-0 sm:right-8 z-30 flex items-center gap-2 pointer-events-auto bg-zinc-950/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-zinc-800/80 shadow-lg">
             <button
               onClick={() =>
                 setCurrentIndex((prev) => (prev === 0 ? HERO_SHOES.length - 1 : prev - 1))

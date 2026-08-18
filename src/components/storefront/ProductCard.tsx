@@ -114,21 +114,21 @@ export function ProductCard({ product }: ProductCardProps) {
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Product Image Container */}
-        <div className="relative aspect-[4/3.8] w-full bg-zinc-50 dark:bg-zinc-950/60 overflow-hidden flex items-center justify-center p-6">
+        <div className="relative aspect-[4/3.6] w-full bg-zinc-50 dark:bg-zinc-950/60 overflow-hidden flex items-center justify-center p-3.5 sm:p-6">
           {/* Badges */}
-          <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5 items-start pointer-events-none">
+          <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-10 flex flex-col gap-1 sm:gap-1.5 items-start pointer-events-none">
             {discount > 0 && (
-              <span className="bg-brand-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+              <span className="bg-brand-500 text-white text-[8.5px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
                 -{discount}%
               </span>
             )}
             {product.isNew && (
-              <span className="bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span className="bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 text-[8.5px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full uppercase tracking-wider">
                 NEW
               </span>
             )}
             {isOutOfStock && (
-              <span className="bg-zinc-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span className="bg-zinc-500 text-white text-[8.5px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full uppercase tracking-wider">
                 SOLD OUT
               </span>
             )}
@@ -139,13 +139,13 @@ export function ProductCard({ product }: ProductCardProps) {
             onClick={handleWishlistClick}
             aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
             className={cn(
-              "absolute top-3 right-3 z-10 p-2 rounded-full transition-all duration-200 backdrop-blur-md active:scale-95",
+              "absolute top-2 sm:top-3 right-2 sm:right-3 z-10 p-1.5 sm:p-2 rounded-full transition-all duration-200 backdrop-blur-md active:scale-95",
               inWishlist
                 ? "bg-brand-500 text-white shadow-md scale-110"
                 : "bg-white/80 dark:bg-zinc-900/80 text-zinc-600 dark:text-zinc-300 hover:text-brand-500 hover:scale-110 shadow-sm"
             )}
           >
-            <Heart className={cn("w-4 h-4", inWishlist && "fill-current")} />
+            <Heart className={cn("w-3.5 sm:w-4 h-3.5 sm:h-4", inWishlist && "fill-current")} />
           </button>
 
           {/* Product Images */}
@@ -179,25 +179,25 @@ export function ProductCard({ product }: ProductCardProps) {
           </Link>
 
           {/* Hover Actions Bar (Quick View & Quick Add) */}
-          <div className="absolute inset-x-3 bottom-3 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 flex gap-2">
+          <div className="absolute inset-x-2 sm:inset-x-3 bottom-2 sm:bottom-3 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 flex gap-1.5 sm:gap-2">
             <button
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 setQuickViewOpen(true);
               }}
-              className="p-2.5 rounded-xl bg-zinc-950/80 hover:bg-zinc-950 text-white dark:bg-zinc-900/80 dark:hover:bg-zinc-800 backdrop-blur-md text-xs font-bold shadow-lg transition-all"
+              className="p-2 sm:p-2.5 rounded-xl bg-zinc-950/80 hover:bg-zinc-950 text-white dark:bg-zinc-900/80 dark:hover:bg-zinc-800 backdrop-blur-md text-xs font-bold shadow-lg transition-all"
               title="Quick View"
             >
-              <Eye className="w-3.5 h-3.5" />
+              <Eye className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
             </button>
 
             {!isOutOfStock && (
               <button
                 onClick={handleQuickAdd}
-                className="flex-1 py-2.5 px-3 rounded-xl bg-zinc-950/90 hover:bg-zinc-950 text-white dark:bg-white/90 dark:hover:bg-white dark:text-zinc-950 backdrop-blur-md text-xs font-bold shadow-lg flex items-center justify-center gap-1.5 transition-all hover:scale-[1.02] active:scale-95"
+                className="flex-1 py-2 sm:py-2.5 px-2.5 sm:px-3 rounded-xl bg-zinc-950/90 hover:bg-zinc-950 text-white dark:bg-white/90 dark:hover:bg-white dark:text-zinc-950 backdrop-blur-md text-[11px] sm:text-xs font-bold shadow-lg flex items-center justify-center gap-1 sm:gap-1.5 transition-all hover:scale-[1.02] active:scale-95"
               >
-                <ShoppingBag className="w-3.5 h-3.5" />
+                <ShoppingBag className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
                 <span>Quick Add</span>
               </button>
             )}
@@ -205,19 +205,19 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Product Information */}
-        <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between bg-white dark:bg-zinc-900/40">
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between gap-2 text-xs">
-              <span className="text-zinc-500 uppercase tracking-wider font-semibold text-[10px]">
+        <div className="p-3 sm:p-5 flex-1 flex flex-col justify-between bg-white dark:bg-zinc-900/40">
+          <div className="space-y-1 sm:space-y-1.5">
+            <div className="flex items-center justify-between gap-1.5 text-xs">
+              <span className="text-zinc-500 uppercase tracking-wider font-semibold text-[9px] sm:text-[10px] truncate">
                 {product.brand?.name || product.category?.name || "Bespoke Footwear"}
               </span>
 
               {product.rating && (
-                <div className="flex items-center gap-1 text-amber-500 font-bold text-[11px]">
-                  <Star className="w-3 h-3 fill-current" />
+                <div className="flex items-center gap-0.5 sm:gap-1 text-amber-500 font-bold text-[10px] sm:text-[11px] shrink-0">
+                  <Star className="w-2.5 sm:w-3 h-2.5 sm:h-3 fill-current" />
                   <span>{product.rating.toFixed(1)}</span>
                   {product.reviewCount ? (
-                    <span className="text-zinc-400 text-[10px]">({product.reviewCount})</span>
+                    <span className="text-zinc-400 text-[9px] sm:text-[10px]">({product.reviewCount})</span>
                   ) : null}
                 </div>
               )}
@@ -227,24 +227,24 @@ export function ProductCard({ product }: ProductCardProps) {
               href={`/product/${product.slug}`}
               className="block group-hover:text-brand-500 transition-colors"
             >
-              <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 line-clamp-1">
+              <h3 className="text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100 line-clamp-1 leading-snug">
                 {product.name}
               </h3>
             </Link>
           </div>
 
-          <div className="mt-3 flex items-baseline gap-2">
+          <div className="mt-2 sm:mt-3 flex items-baseline gap-1.5 sm:gap-2">
             {product.salePrice ? (
               <>
-                <span className="text-base font-bold text-zinc-950 dark:text-white">
+                <span className="text-xs sm:text-base font-bold text-zinc-950 dark:text-white">
                   {formatPrice(product.salePrice)}
                 </span>
-                <span className="text-xs text-zinc-400 line-through">
+                <span className="text-[10px] sm:text-xs text-zinc-400 line-through">
                   {formatPrice(product.price)}
                 </span>
               </>
             ) : (
-              <span className="text-base font-bold text-zinc-950 dark:text-white">
+              <span className="text-xs sm:text-base font-bold text-zinc-950 dark:text-white">
                 {formatPrice(product.price)}
               </span>
             )}

@@ -58,7 +58,7 @@ export default async function CategoryPage({
       </nav>
 
       {/* Category Hero Banner */}
-      <div className="relative rounded-3xl overflow-hidden bg-zinc-900 p-8 sm:p-14 border border-zinc-800 text-white flex flex-col justify-end min-h-[220px]">
+      <div className="relative rounded-3xl overflow-hidden bg-zinc-900 p-6 sm:p-14 border border-zinc-800 text-white flex flex-col justify-end min-h-[190px] sm:min-h-[220px]">
         {category.image && (
           <Image
             src={category.image}
@@ -71,11 +71,11 @@ export default async function CategoryPage({
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent" />
 
-        <div className="relative z-10 space-y-2 max-w-xl">
-          <span className="text-[11px] font-bold uppercase tracking-widest text-brand-500">
+        <div className="relative z-10 space-y-1.5 sm:space-y-2 max-w-xl">
+          <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-brand-500">
             COLLECTION OVERVIEW
           </span>
-          <h1 className="text-3xl sm:text-5xl font-display font-black tracking-tight">
+          <h1 className="text-2xl sm:text-5xl font-display font-black tracking-tight">
             {category.name}
           </h1>
           {category.description && (
@@ -88,7 +88,7 @@ export default async function CategoryPage({
 
       {/* Products Grid */}
       <div>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
           <p className="text-xs text-zinc-500 font-semibold uppercase tracking-wider">
             Available Models ({category.products.length})
           </p>
@@ -99,7 +99,7 @@ export default async function CategoryPage({
             <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">No shoes currently available in this category.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
             {category.products.map((product: any) => (
               <ProductCard key={product.id} product={product} />
             ))}
