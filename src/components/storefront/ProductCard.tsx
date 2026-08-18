@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { Heart, Star, ShoppingBag, Eye } from "lucide-react";
+import { Heart, Star, ShoppingBag, Eye, Zap } from "lucide-react";
 import { formatPrice, calculateDiscountPercentage, cn } from "@/lib/utils";
 import { useWishlistStore } from "@/lib/store/wishlistStore";
 import { useCartStore } from "@/lib/store/cartStore";
@@ -34,9 +34,11 @@ export interface ProductCardProps {
     images: { url: string; alt?: string | null; isPrimary?: boolean }[];
     sizes?: { size: string; stock: number }[];
   };
+  aiMatchScore?: number;
+  aiMatchReason?: string;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, aiMatchScore, aiMatchReason }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
 
@@ -117,6 +119,12 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="relative aspect-[4/3.6] w-full bg-zinc-50 dark:bg-zinc-950/60 overflow-hidden flex items-center justify-center p-3.5 sm:p-6">
           {/* Badges */}
           <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-10 flex flex-col gap-1 sm:gap-1.5 items-start pointer-events-none">
+            {aiMatchScore && aiMatchScore >= 60 && (
+              <span className="bg-gradient-to-r from-brand-500 to-purple-600 text-white text-[8px] sm:text-[9.5px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1">
+                <Zap className="w-2.5 h-2.5 fill-white" />
+                <span>{aiMatchScore}% Match</span>
+              </span>
+            )}
             {discount > 0 && (
               <span className="bg-brand-500 text-white text-[8.5px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
                 -{discount}%
@@ -249,6 +257,13 @@ export function ProductCard({ product }: ProductCardProps) {
               </span>
             )}
           </div>
+
+          {aiMatchReason && (
+            <div className="mt-2 pt-1.5 border-t border-zinc-100 dark:border-zinc-800/80 text-[10px] text-brand-600 dark:text-brand-400 font-medium line-clamp-1 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-500 shrink-0 animate-pulse" />
+              <span className="truncate">{aiMatchReason}</span>
+            </div>
+          )}
         </div>
       </div>
 

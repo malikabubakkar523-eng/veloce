@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import { ShopFiltersClient } from "@/components/shop/ShopFiltersClient";
 import { ShopPageBanner } from "@/components/storefront/ShopPageBanner";
+import { AIRecommendedSection } from "@/components/storefront/AIRecommendedSection";
 import { Sparkles, ArrowRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -70,12 +71,12 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     if (maxPrice) where.price.lte = Number(maxPrice);
   }
 
-  let orderBy: any = { createdAt: "desc" };
-  if (sort === "price-low") orderBy = { price: "asc" };
-  else if (sort === "price-high") orderBy = { price: "desc" };
-  else if (sort === "rating") orderBy = { rating: "desc" };
-  else if (sort === "newest") orderBy = { createdAt: "desc" };
-  else if (sort === "featured") orderBy = [{ isFeatured: "desc" }, { rating: "desc" }];
+  const orderBy: any = {};
+  if (sort === "price-asc") orderBy.price = "asc";
+  else if (sort === "price-desc") orderBy.price = "desc";
+  else if (sort === "rating") orderBy.rating = "desc";
+  else if (sort === "newest") orderBy.createdAt = "desc";
+  else orderBy.isFeatured = "desc";
 
   let products: any[] = [];
   let categories: any[] = [];
@@ -94,9 +95,16 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           sizes: true,
         },
       }),
-      db.category.findMany({ where: { isActive: true }, orderBy: { order: "asc" } }),
-      db.brand.findMany({ orderBy: { name: "asc" } }),
-      db.shopBanner.findUnique({ where: { id: "default" } }),
+      db.category.findMany({
+        where: { isActive: true },
+        orderBy: { order: "asc" },
+      }),
+      db.brand.findMany({
+        orderBy: { name: "asc" },
+      }),
+      db.shopBanner.findFirst({
+        where: { id: "default" },
+      }),
     ]);
     products = data[0];
     categories = data[1];
@@ -137,6 +145,9 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           </ShopFiltersClient>
         </Suspense>
       </div>
+
+      {/* 3. AI PERSONALIZED RECOMMENDATION SECTION */}
+      <AIRecommendedSection />
     </div>
   );
 }

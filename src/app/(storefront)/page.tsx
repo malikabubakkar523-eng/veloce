@@ -8,6 +8,8 @@ import { DealsCountdown } from "@/components/storefront/DealsCountdown";
 import { HomeGalleryShowcase } from "@/components/storefront/HomeGalleryShowcase";
 import { HomeVideoShowcase } from "@/components/storefront/HomeVideoShowcase";
 import { CinematicFootwearShowcase } from "@/components/storefront/CinematicFootwearShowcase";
+import { AIRecommendedSection } from "@/components/storefront/AIRecommendedSection";
+import { AINewDropsMatchingSection } from "@/components/storefront/AINewDropsMatchingSection";
 import { CURATED_GALLERY_ITEMS } from "@/lib/galleryData";
 import {
   ArrowRight,
@@ -259,7 +261,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 5. DYNAMIC DEALS SECTION (With Live Countdown & Integrated Background Shoe) */}
+      {/* 5. AI-POWERED PERSONALIZATION ENGINE: RECOMMENDED FOR YOU */}
+      <AIRecommendedSection />
+
+      {/* 6. DYNAMIC DEALS SECTION (With Live Countdown & Integrated Background Shoe) */}
       {activeDeal && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative rounded-3xl bg-zinc-900 border border-zinc-800 overflow-hidden p-6 sm:p-12 lg:p-16">
@@ -390,13 +395,16 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 8. CINEMATIC ATHLETIC MOTION & CARBON LAB VIDEO SHOWCASE */}
+      {/* 8. AI-MATCHED NEW DROPS YOU MIGHT LIKE */}
+      <AINewDropsMatchingSection />
+
+      {/* 9. CINEMATIC ATHLETIC MOTION & CARBON LAB VIDEO SHOWCASE */}
       <CinematicFootwearShowcase />
 
-      {/* 9. SS26 LOOKBOOK & RUNWAY GALLERY SHOWCASE (Men, Women, and Kids Spotlights) */}
+      {/* 10. SS26 LOOKBOOK & RUNWAY GALLERY SHOWCASE (Men, Women, and Kids Spotlights) */}
       <HomeGalleryShowcase items={galleryItems} />
 
-      {/* 10. BRAND VALUE PROPOSITION */}
+      {/* 11. BRAND VALUE PROPOSITION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="p-6 sm:p-12 rounded-3xl bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800">
           <div className="max-w-2xl mx-auto text-center space-y-2.5 sm:space-y-3 mb-8 sm:mb-12">

@@ -24,7 +24,13 @@
    - Categories include: Sneakers, Running, Lifestyle, Boots, Formal, Sports.
 3. **Dedicated Cinematic Video Showcase**:
    - High-motion footwear running video with mute/unmute audio controls and direct CTA links.
-4. **The Carbon Propulsion Lab (Editorial Showcase)**:
+4. **AI-Powered Personalization Engine ("Recommended For You")**:
+   - Learns customer style preferences (categories, color palettes, technical silhouettes, and price tiers) automatically from favorited/wishlisted shoes.
+   - Dynamic real-time recommendation updates when shoes are added/removed from favorites.
+   - "New Shoes You Might Like" automated curation for fresh releases matching customer aesthetics.
+   - Intelligent Match Percentage badge (e.g. `⚡ 96% Match`) with explainable rationale bullets.
+   - Automated alerts for price drops on favorited shoes and new style-matched drops.
+5. **The Carbon Propulsion Lab (Editorial Showcase)**:
    - High-tech aerodynamic shoe visual blended seamlessly into background.
    - Technical biomechanics highlights (Sub-2 hour marathon racers, 88.4% energy return).
 5. **Tuscan Atelier Heritage Showcase**:
